@@ -14,44 +14,27 @@ class EventSpider(scrapy.Spider):
             # TODO
             eventID = eventID.split('_')[-1]
             eventName = ''.join(entry.css('.event-info .title ::text').extract())
-            day = ''
-            time = ''
-            date = ''
-            month = ''
-            monthNr = ''
-            location = ''
+
+            ### Getting date and place
+            # TODO
+            DATEPLACE = '.date-place '
+            day = entry.css(DATEPLACE + '.right .day-time .day ::text').extract_first()
+            time = entry.css(DATEPLACE + '.right .day-time .time ::text').extract_first()
+            date = entry.css(DATEPLACE + '.left .date ::text').extract_first()
+            month = entry.css(DATEPLACE + '.left .month ::text').extract_first()
+            monthNr = entry.css(DATEPLACE + '.left .month-number ::text').extract_first()
+
+            ### Getting location
+            location = entry.css(DATEPLACE + '.location ::text').extract_first().replace('\n', '').replace('\t', '')
             locationID = ''
+            print('-> ' + location)
+            if location == '':
+                location = entry.css(DATEPLACE + '.location a::text').extract_first().replace('\n', '').replace('\t', '')
+                locationID = entry.css(DATEPLACE + '.location a::attr(href)').extract_first().split('/')[-1]
 
             ### Getting image
             # TODO
 
-
-            ### Getting date and place
-            DATEPLACE_INFO = '.date-place'
-            for dateplace in entry.css(DATEPLACE_INFO):
-                ### Getting date
-                # TODO
-                DAY_INFO = '.right .day-time .day ::text'
-                TIME_INFO = '.right .day-time .time ::text'
-                DATE_INFO = '.left .date ::text'
-                MONTH_INFO = '.left .month ::text'
-                MONTH_NUMBER = '.left .month-number ::text'
-                day = dateplace.css(DAY_INFO).extract_first(),
-                time = dateplace.css(TIME_INFO).extract_first(),
-                date = dateplace.css(DATE_INFO).extract_first(),
-                month = dateplace.css(MONTH_INFO).extract_first(),
-                monthNr = dateplace.css(MONTH_NUMBER).extract_first(),
-
-                ### Getting location
-                PLACE_INFO = '.location ::text'
-                location = dateplace.css(PLACE_INFO).extract_first().replace('\n', '').replace('\t', '')
-                if location == "":
-                    PLACE_INFO_INLINK = '.location a ::text'
-                    PLACE_ID = '.location a::attr(href)'
-                    location = dateplace.css(PLACE_INFO_INLINK).extract_first().replace('\n', '').replace('\t', ''),
-                    locationID = dateplace.css(PLACE_ID).extract_first().split('/')[-1],
-                else:
-                    location = location,
 
             yield {
                 'eventID': eventID,
