@@ -38,7 +38,6 @@ class EventSpider(scrapy.Spider):
                 locationID = entry.css(DATEPLACE + '.location a::attr(href)').extract_first().split('/')[-1]
 
             ### Getting ticket info
-            # TODO
             BUY = '.buy '
             ticketStatus = entry.css(BUY + '.status ::text').extract_first()
             ticketInfo = entry.css(BUY + '.notification ::text').extract_first()
